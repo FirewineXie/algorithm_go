@@ -1,61 +1,28 @@
 package middle
 
-import "strings"
-
 // 动态规划
 func longestPalindrome(s string) string {
-
-	length := len(s)
-	if length < 2 {
-		return s
+	dp := make([][]bool, len(s))
+	result := s[0:1] //初始化结果(最小的回文就是单个字符)
+	for i := 0; i < len(s); i++ {
+		dp[i] = make([]bool, len(s))
+		dp[i][i] = true // 根据case 1 初始数据
 	}
-
-	maxLen := 1
-	begin := 0
-
-	// dp[i][j] 表示 s[i,j]是否是回文串
-	var dp [][]bool
-	// 初始化 ： 所有长度为1 的子串都是回文串
-	for i := 0; i < length; i++ {
-		var tmp []bool
-		for j := 0; j < length; j++ {
-			tmp = append(tmp, true)
-		}
-		dp = append(dp, tmp)
-	}
-
-	split := strings.Split(s, "")
-
-	// 递推开始
-	for l := 2; l < length; l++ {
-		// 枚举左边界，左边界的上限设置可以宽松一些
-		for i := 0; i < length; i++ {
-			// 有 l 和 i 可以确定右边界， 即 j- i + 1 = l
-			j := l + i - 1
-			// 右边界越界，退出当前循环
-			if j >= length {
-				break
-			}
-			if split[i] != split[j] {
-				dp[i][j] = false
+	for length := 2; length <= len(s); length++ { //长度固定，不断移动起点
+		for start := 0; start < len(s)-length+1; start++ { //长度固定，不断移动起点
+			end := start + length - 1
+			if s[start] != s[end] { //首尾不同则不可能为回文
+				continue
+			} else if length < 3 {
+				dp[start][end] = true //即case 2的判断
 			} else {
-				if j-i < 3 {
-					dp[i][j] = true
-				} else {
-					dp[i][j] = dp[i+1][j-1]
-				}
+				dp[start][end] = dp[start+1][end-1] //状态转移
 			}
-
-			// 只要 dp[i][L] == true 成立，就表示子串 s[i..L] 是回文，此时记录回文长度和起始位
-			if dp[i][j] && j-i+1 > maxLen {
-				maxLen = j - i + 1
-				begin = i
+			if dp[start][end] && (end-start+1) > len(result) { //记录最大值
+				result = s[start : end+1]
 			}
 		}
 	}
-	if begin+maxLen == len(split)-1 {
-		return strings.Join(split[begin:begin+maxLen], "")
-	}
-	return strings.Join(split[begin:begin+maxLen+1], "")
+	return result
 
 }

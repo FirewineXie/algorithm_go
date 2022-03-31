@@ -12,13 +12,11 @@ func Test_longestPalindrome(t *testing.T) {
 		want string
 	}{
 		// TODO: Add test cases.
+		{args: args{s: "bb"},
+			want: "bb"},
 		{
-			args: args{s: "bb"},
-			want: "bb",
-		},
-		{
-			args: args{s: "cbbd"},
-			want: "bb",
+			args: args{s: "babad"},
+			want: "bab",
 		},
 	}
 	for _, tt := range tests {
